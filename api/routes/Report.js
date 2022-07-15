@@ -54,7 +54,7 @@ router.post('/dashboard/day', async (req, res) => {
     let start = moment().subtract(2, "year").startOf("month").startOf("day").unix();
     // let end_date = moment().subtract(0, "month").endOf("month").endOf("day").unix();
     
-    const aggr = await Invoice.aggregate(
+    const aggr = await Invoice.aggregate([
         {
             $match : {
                 created : {
@@ -79,7 +79,7 @@ router.post('/dashboard/day', async (req, res) => {
             }
         },
         {$sort: {_id: 1}}
-    );
+    ]);
 
     return res.formatter.ok(aggr);
     
@@ -97,7 +97,7 @@ router.post('/dashboard/week', async (req, res) => {
     let start = moment().subtract(2, "year").startOf("month").startOf("day").unix();
     let end = moment().subtract(0, "month").endOf("month").endOf("day").unix();
     
-    const aggr = await Invoice.aggregate(
+    const aggr = await Invoice.aggregate([
         {
             $match : {
                 created : {
@@ -122,7 +122,7 @@ router.post('/dashboard/week', async (req, res) => {
             }
         },
         {$sort: {_id: 1}}
-    );
+    ]);
 
     return res.formatter.ok(aggr);
     
@@ -140,7 +140,8 @@ router.post('/dashboard/month', async (req, res) => {
     let start = moment().subtract(2, "year").startOf("month").startOf("day").unix();
     let end = moment().subtract(0, "month").endOf("month").endOf("day").unix();
     
-    const aggr = await Invoice.aggregate(
+    const aggr = await Invoice.aggregate([
+
         {
             $match : {
                 created : {
@@ -165,7 +166,8 @@ router.post('/dashboard/month', async (req, res) => {
             }
         },
         {$sort: {_id: 1}}
-    );
+    
+    ]);
 
     return res.formatter.ok(aggr);
     
@@ -183,7 +185,8 @@ router.post('/dashboard/year', async (req, res) => {
     let start = moment().subtract(1, "year").startOf("year").startOf("day").unix();
     let end = moment().subtract(1, "year").endOf("year").endOf("day").unix();
     
-    const aggr = await Invoice.aggregate(
+    const aggr = await Invoice.aggregate([
+
         {
             $match : {
                 created : {
@@ -207,7 +210,8 @@ router.post('/dashboard/year', async (req, res) => {
             }
         },
         {$sort: {_id: 1}}
-    );
+    
+    ]);
 
     return res.formatter.ok(aggr);
     
