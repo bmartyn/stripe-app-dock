@@ -33,7 +33,6 @@ app.use(cors())
 
 // const MONGO_URI = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${process.env.MONGO_SERVICE_HOST}:${process.env.MONGO_SERVICE_PORT}/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`
 const MONGO_URI = "mongodb+srv://admin:admin@cluster0.loydr.mongodb.net/mongo?retryWrites=true&w=majority"
-console.log(MONGO_URI);
 
 mongoose.connect(MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true}).then(r => {
   console.log("MONGODB CONNECTED!")
