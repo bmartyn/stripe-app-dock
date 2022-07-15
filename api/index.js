@@ -28,7 +28,7 @@ import { initiateRestore } from './stripe.js';
 // const UserSchema = require("node-mongoose-auth/models/UserSchema").add({permissions : String});
 
 const app = express()
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.use(cors())
 
 // const MONGO_URI = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${process.env.MONGO_SERVICE_HOST}:${process.env.MONGO_SERVICE_PORT}/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`
@@ -94,4 +94,4 @@ app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.listen(port, () => console.log(`Backend API listening on port ${process.env.PORT || port}!`))
+app.listen(port, () => console.log(`Backend API listening on port ${port}!`))
