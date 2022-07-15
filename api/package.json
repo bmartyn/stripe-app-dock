@@ -52,7 +52,7 @@
     "prettier": "^1.17.1"
   },
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "postinstall": "patch-package"
   },
   "eslintConfig": {
