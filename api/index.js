@@ -31,11 +31,12 @@ const app = express()
 const port = 3000;
 app.use(cors())
 
-const MONGO_URI = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${process.env.MONGO_SERVICE_HOST}:${process.env.MONGO_SERVICE_PORT}/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`
+// const MONGO_URI = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${process.env.MONGO_SERVICE_HOST}:${process.env.MONGO_SERVICE_PORT}/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`
+const MONGO_URI = "mongodb+srv://admin:admin@cluster0.loydr.mongodb.net/mongo?retryWrites=true&w=majority"
 console.log(MONGO_URI);
 
 mongoose.connect(MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true}).then(r => {
-
+  console.log("MONGODB CONNECTED!")
   initiateRestore();
   
   app.use('/auth', authRouter);
@@ -89,9 +90,9 @@ app.use('/user', AuthRoutes);
 // PRINT ROUTES
 
 
-app.use(express.static(path.join(__dirname, '..', '..', 'build')));
+app.use(express.static(path.join(__dirname, 'build')));
 app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '..', 'build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.listen(port, () => console.log(`Backend API listening on port ${port}!`))
+app.listen(port, () => console.log(`Backend API listening on port ${process.env.PORT || port}!`))
