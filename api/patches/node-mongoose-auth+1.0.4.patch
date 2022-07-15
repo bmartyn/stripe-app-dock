@@ -1,0 +1,117 @@
+diff --git a/node_modules/node-mongoose-auth/models/User.js b/node_modules/node-mongoose-auth/models/User.js
+index b4ea1f7..fcb1110 100644
+--- a/node_modules/node-mongoose-auth/models/User.js
++++ b/node_modules/node-mongoose-auth/models/User.js
+@@ -1,6 +1,12 @@
+ const mongoose = require("mongoose");
+ const UserSchema = require("./UserSchema");
+ 
++
++
++
++// mongoose.connect(MONGO_URI);
++
++
+ /**
+  * UserModel
+  *
+@@ -10,4 +16,9 @@ const UserSchema = require("./UserSchema");
+  * importing the User Model or importing the authMiddleware.
+  * */
+ 
++// module.exports = () => {
++    
++//     return mongoose.model("User", UserSchema);
++// };
++
+ module.exports = mongoose.model("User", UserSchema);
+\ No newline at end of file
+diff --git a/node_modules/node-mongoose-auth/models/UserSchema.js b/node_modules/node-mongoose-auth/models/UserSchema.js
+index 77efdd6..bae1d1a 100644
+--- a/node_modules/node-mongoose-auth/models/UserSchema.js
++++ b/node_modules/node-mongoose-auth/models/UserSchema.js
+@@ -101,6 +101,39 @@ const UserSchema = mongoose.Schema(
+       type: Boolean,
+       default: false,
+     },
++    test : {
++      type: Boolean,
++      default: true
++    },
++    permissions: {
++      type : Map,
++      of : String,
++      required : true,
++      default : {
++        // View Invoice
++        view_invoice : false,
++        // Handle Reports
++        view_report : false,
++        view_detailed_report : false,
++        // Handle refunds
++        set_refund : false,
++        set_to_be_refund : false,
++        // Set permanent statuses.
++        set_paid : false,
++        set_invoiced_in_error : false,
++        set_waiver : false,
++        set_voucher : false,
++        set_refund : false,
++        set_uncollectible : false,
++        // Set temporary statuses.
++        set_to_be_paid : false,
++        set_to_be_invoiced_in_error : false,
++        set_to_be_waiver : false,
++        set_to_be_voucher : false,
++        set_to_be_refund : false,
++        set_to_be_uncollectible : false,
++      }
++    }
+   },
+   { timestamps: true }
+ );
+diff --git a/node_modules/node-mongoose-auth/routes/users.js b/node_modules/node-mongoose-auth/routes/users.js
+index 999c7c3..0e3e030 100644
+--- a/node_modules/node-mongoose-auth/routes/users.js
++++ b/node_modules/node-mongoose-auth/routes/users.js
+@@ -1,13 +1,22 @@
+ const express = require("express");
+ const User = require("../models/User");
+ const auth = require("../auth");
++const mongoose = require("mongoose");
+ 
+ const router = express.Router();
+ 
++const connectIfRequired = async () => {
++  const MONGO_URI = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${process.env.MONGO_SERVICE_HOST}:${process.env.MONGO_SERVICE_PORT}/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`
++  await mongoose.connect(MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true});
++  return;
++}
++
+ router.post("/register", async (req, res) => {
++  await connectIfRequired();
+   const { firstName, lastName, email, password, birthDate, age, sex, mobile, about, address } = req.body;
+ 
+   try {
++    // console.log(UserSchema);
+     const user = await new User({
+       firstName,
+       lastName,
+@@ -21,6 +30,8 @@ router.post("/register", async (req, res) => {
+       about: about || "",
+     }).save();
+ 
++    
++
+     await auth.setPassword(user, password);
+     await user.save();
+ 
+@@ -34,6 +45,8 @@ router.post("/register", async (req, res) => {
+ 
+ 
+ router.post("/login", async (req, res) => {
++  await connectIfRequired();
++  
+   const { email, password } = req.body;
+   
+   const user = await User.findOne({ email });
