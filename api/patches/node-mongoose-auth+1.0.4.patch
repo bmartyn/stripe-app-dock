@@ -101,7 +101,7 @@ index 77efdd6..1a4aad0 100644
    { timestamps: true }
  );
 diff --git a/node_modules/node-mongoose-auth/routes/users.js b/node_modules/node-mongoose-auth/routes/users.js
-index 999c7c3..133b677 100644
+index 999c7c3..606c60c 100644
 --- a/node_modules/node-mongoose-auth/routes/users.js
 +++ b/node_modules/node-mongoose-auth/routes/users.js
 @@ -1,13 +1,22 @@
@@ -114,7 +114,7 @@ index 999c7c3..133b677 100644
  
 +const connectIfRequired = async () => {
 +  const MONGO_URI = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${process.env.MONGO_SERVICE_HOST}:${process.env.MONGO_SERVICE_PORT}/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`
-+  await mongoose.connect(MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true});
++  if(mongoose.connection.readyState != 1) await mongoose.connect(MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 +  return;
 +}
 +
