@@ -10,8 +10,6 @@ import cors from 'cors';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
-
 // const mongo = require('@metamodules/mongo')().base;
 
 import invoiceRoutes from "./routes/Invoice.js";
@@ -25,21 +23,19 @@ import { authRouter } from 'node-mongoose-auth';
 import mongoose from 'mongoose';
 import AuthRoutes from './routes/Auth.js';
 import { initiateRestore } from './stripe.js';
-// const UserSchema = require("node-mongoose-auth/models/UserSchema").add({permissions : String});
 
 const app = express()
 const port = process.env.PORT || 3000;
 app.use(cors())
 
-// const MONGO_URI = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${process.env.MONGO_SERVICE_HOST}:${process.env.MONGO_SERVICE_PORT}/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`
 const MONGO_URI = "mongodb+srv://admin:admin@cluster0.loydr.mongodb.net/mongo?retryWrites=true&w=majority"
 
+
 mongoose.connect(MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true}).then(r => {
-  console.log("MONGODB CONNECTED!")
+
   initiateRestore();
   
   app.use('/auth', authRouter);
-  app.use('/reports', reportRoutes);
 
 });
 
@@ -51,6 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use('/invoices', invoiceRoutes);
+app.use('/reports', reportRoutes);
 
 app.use('/user', AuthRoutes);
 
@@ -87,7 +84,6 @@ app.use('/user', AuthRoutes);
 
 //   app._router.stack.forEach(print.bind(null, []))
 // PRINT ROUTES
-
 
 app.use(express.static(path.join(__dirname, 'build')));
 app.get('/*', (req, res) => {
