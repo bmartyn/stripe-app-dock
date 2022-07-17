@@ -137,6 +137,7 @@ router.post('/list', authMiddleware,  async (req, res) => {
     
     const user = req.user;
     
+    console.log(data);
     // if(notPermitted(user, "access_reports")) return res.formatter.unauthorized("You don't have the permission to access Reports.");
 
     const options = {
@@ -147,7 +148,7 @@ router.post('/list', authMiddleware,  async (req, res) => {
     }
     
     const reports = await Stripe.reporting.reportRuns.list(options);
-    
+    console.log(reports);
     return res.formatter.ok(reports);
 
 })
@@ -182,6 +183,49 @@ router.post('/dashboard/day', async (req, res) => {
                     hour : {
                         $hour : "$created_date"
                     }
+                },
+                count : { $sum : 1 },
+                total_amount : {
+                    $sum : "$amount_due"
+                },
+
+            }
+        },
+        {$sort: {_id: 1}}
+    ]);
+
+    return res.formatter.ok(aggr);
+    
+
+})
+
+router.post('/dashboard/custom', async (req, res) => {
+
+    const data = req.body;
+
+    // const start = data.start
+    // const end = data.end
+
+    // previous month
+    let start = moment().subtract(2, "year").startOf("month").startOf("day").unix();
+    let end = moment().subtract(0, "month").endOf("month").endOf("day").unix();
+    
+    const aggr = await Invoice.aggregate([
+        {
+            $match : {
+                created : {
+                    $gte : data.start,
+                    $lte : data.end
+                },
+                // status : "open"
+            }
+        },
+        {
+            $group : {
+                "_id": {
+                    "year": { "$year": "$created_date"},
+                        "month": { "$month": "$created_date"},
+                        "day": { "$dayOfMonth": "$created_date"}
                 },
                 count : { $sum : 1 },
                 total_amount : {
